@@ -1,0 +1,27 @@
+{
+  "name": "vue-expand-ball",
+  "description": "A damn easy expandable menu",
+  "main": [
+    "dist/vue-expand-ball.js",
+    "dist/vue-expand-ball.min.js"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node",
+    "es6"
+  ],
+  "authors": [
+    "Howard.Zuo"
+  ],
+  "license": "GPL-3.0",
+  "keywords": [
+    "vue",
+    "menu"
+  ],
+  "homepage": "https://github.com/leftstick/vue-expand-ball",
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ]
+}
