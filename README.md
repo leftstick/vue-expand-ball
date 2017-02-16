@@ -9,6 +9,8 @@ A damn easy expandable menu without any extra dependency for `vue`.
 
 Read full documentation here: [documentation](https://leftstick.github.io/vue-expand-ball/)
 
+![](./demo/img/preview.gif)
+
 ## Getting started
 
 This is a component requires vue `^2.1.10`. And ease the way to display a draggable menu item on your page.
