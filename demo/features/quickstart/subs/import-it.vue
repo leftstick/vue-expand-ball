@@ -6,7 +6,7 @@
                 <div>
                     <div class="type-name">ES2015:</div>
                     <div class="snippet">
-                        <pre><code class="javascript">import VueExpandBall from 'vue-expand-ball';</code></pre>
+                        <pre><code class="javascript">import {VueExpandBall} from 'vue-expand-ball';</code></pre>
                     </div>
                     <p>It is recommended to use <a href="http://webpack.github.io/" target="_blank">webpack</a> to bootstrap dependencies via ES2015 or CommonJS modular</p>
                 </div>
@@ -15,7 +15,7 @@
                 <div>
                     <div class="type-name">CommonJS:</div>
                     <div class="snippet">
-                        <pre><code class="javascript">const VueExpandBall = require('vue-expand-ball');</code></pre>
+                        <pre><code class="javascript">const {VueExpandBall} = require('vue-expand-ball');</code></pre>
                     </div>
                     <p>It is recommended to use <a href="http://webpack.github.io/" target="_blank">webpack</a> to bootstrap dependencies via ES2015 or CommonJS modular</p>
                 </div>

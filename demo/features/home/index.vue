@@ -1,11 +1,7 @@
 <template>
     <div class="home">
         <h1 class="page-title">vue-expand-ball</h1>
-        <expand-ball :options="opts" class="init-ball-pos">
-            <span>menu1</span>
-            <span>menu2</span>
-            <span>menu3</span>
-        </expand-ball>
+        <img src="../../img/preview.gif" alt="preview">
 
         <github></github>
 
@@ -25,12 +21,16 @@ export default {
     data() {
         return {
             opts: {
-                openTxt: '|',
-                ballSize: 60,
+                ballSize: 45,
                 menuSize: 40,
-                ballColor: 'red'
+                menuColor: 'red'
             }
         };
+    },
+    methods: {
+        fuck() {
+            alert('fuck');
+        }
     },
     components: {
         github,
@@ -55,13 +55,11 @@ export default {
         width: $width;
     }
 
-    .init-ball-pos {
-        top: 100px;
-        left: 100px;
-    }
-
     @media screen and (max-width: 800px) {
         .home-desc {
+            width: $s-width;
+        }
+        img {
             width: $s-width;
         }
     }

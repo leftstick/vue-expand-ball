@@ -1,31 +1,20 @@
 const {resolve} = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
-module.exports = function(env = {}) {
-    const {isDemo} = env;
+module.exports = function() {
     return {
         entry: {
-            ext: resolve(__dirname, 'demo', 'fw', 'ext', 'index.js'),
-            index: resolve(__dirname, 'demo', 'index.js')
+            index: resolve(__dirname, 'src', 'index.js')
         },
         output: {
-            path: resolve(__dirname, 'build'),
-            filename: (isDemo ? '[hash].' : '') + '[name].bundle.js',
-            chunkFilename: (isDemo ? '[hash].' : '') + '[id].bundle.js',
-            publicPath: isDemo ? '/vue-expand-ball/' : '/'
+            path: resolve(__dirname, 'dist'),
+            filename: 'vue-expand-ball.min.js',
+            libraryTarget: 'umd'
+
         },
-        devtool: isDemo ? '' : '#source-map',
         module: {
             rules: [
-                {
-                    test: /\.css$/,
-                    use: [
-                        'style-loader',
-                        'css-loader',
-                        'postcss-loader'
-                    ]
-                },
                 {
                     test: /\.vue$/,
                     use: [{
@@ -52,17 +41,13 @@ module.exports = function(env = {}) {
                         }
                     ],
                     exclude: /node_modules/
-                },
-                {
-                    test: /\.(eot|svg|ttf|woff|woff2|png|gif)\w*/,
-                    use: ['file-loader']
                 }
             ]
         },
         resolve: {
             modules: [
                 resolve(__dirname, 'node_modules'),
-                resolve(__dirname, 'demo')
+                resolve(__dirname, 'src')
             ],
             extensions: [
                 '.js',
@@ -72,21 +57,13 @@ module.exports = function(env = {}) {
                 vue$: 'vue/dist/vue.js'
             }
         },
-        plugins: (isDemo ? [new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })] : []).concat([
-            new webpack.optimize.CommonsChunkPlugin({
-                name: ['app', 'ext']
+        plugins: [
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                }
             }),
-            new HtmlWebpackPlugin({
-                filename: 'index.html',
-                inject: 'body',
-                template: resolve(__dirname, 'demo', 'index.html'),
-                favicon: resolve(__dirname, 'demo', 'img', 'favicon.ico'),
-                hash: false
-            })
-        ])
-    }
+            new UnminifiedWebpackPlugin()
+        ]
+    };
 };

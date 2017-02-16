@@ -1,4 +1,4 @@
-import {retrieveNodes} from '../helper/dom';
+import {retrieveMenuNodes} from '../helper/dom';
 
 export default {
     bind(el, bindings, vnode) {
@@ -11,7 +11,7 @@ export default {
 
 
 function toggle(bindings, el) {
-    const nodes = retrieveNodes(el);
+    const nodes = retrieveMenuNodes(el);
     const {expanded, radius, ballSize, menuSize} = bindings.value;
     if (expanded) {
         return nodes

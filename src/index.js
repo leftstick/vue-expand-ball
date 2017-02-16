@@ -4,7 +4,7 @@ const components = [
     ExpandBall
 ];
 
-const VueExpandBall = {
+export const VueExpandBall = {
     install(Vue) {
         if (VueExpandBall.installed) {
             return;
@@ -15,5 +15,3 @@ const VueExpandBall = {
         });
     }
 };
-
-export default VueExpandBall;

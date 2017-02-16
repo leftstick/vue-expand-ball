@@ -1,5 +1,5 @@
 
-export function retrieveNodes(el) {
+export function retrieveMenuNodes(el) {
     return [].slice.apply(el.querySelector('.rounded-menus').childNodes).filter(node => node.nodeType === 1);
 }
 

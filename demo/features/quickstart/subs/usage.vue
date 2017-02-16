@@ -14,12 +14,15 @@
                 <div>
                     <div class="type-name">Add <code>&lt;expand-ball&gt;</code> element in template:</div>
                     <div class="snippet">
-                        <pre><code class="html">&lt;expand-ball open="|" close="X"&gt;
-    &lt;span&gt;menu1&lt;/span&gt;
-    &lt;span&gt;menu2&lt;/span&gt;
-    &lt;span&gt;menu3&lt;/span&gt;
+                        <pre><code class="html">&lt;expand-ball&gt;
+    &lt;span slot="menu"&gt;M1&lt;/span&gt;
+    &lt;span slot="menu"&gt;M2&lt;/span&gt;
+    &lt;span slot="menu"&gt;M3&lt;/span&gt;
 &lt;/expand-ball&gt;</code></pre>
                     </div>
+                    <blockquote>
+                        Be sure that <code>slot="menu"</code> is required, otherwise <code>expand-ball</code> won't know where to use your menu
+                    </blockquote>
                 </div>
             </li>
         </ul>

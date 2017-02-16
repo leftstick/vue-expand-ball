@@ -1,11 +1,20 @@
-import {stop} from '../helper/event';
 import {isDescendant} from '../helper/dom';
+
+const listeners = {};
 
 export default {
     bind(el, bindings, vnode) {
-        console.log('bindings', bindings);
-        let drag = false,
-            offsetX = 0,
+
+        el.dataset.listenerId = 'listener_' + new Date().getTime();
+        listeners[el.dataset.listenerId] = [{
+            name: 'mousedown',
+            listener: startDrag
+        }, {
+            name: 'mouseup',
+            listener: stopDrag
+        }];
+
+        let offsetX = 0,
             offsetY = 0,
             timer = null;
 
@@ -38,14 +47,13 @@ export default {
 
                 offsetX = mouseX(evt);
                 offsetY = mouseY(evt);
-                drag = e.target; // basically we're using this to detect dragging
 
                 // save any previous mousemove event handler:
                 if (document.body.onmousemove) {
                     mousemoveTemp = document.body.onmousemove;
                 }
                 document.body.onmousemove = mouseMoveHandler;
-            }, 160);
+            }, 100);
             return false;
         }
 
@@ -61,12 +69,20 @@ export default {
             setTimeout(() => {
                 el.dataset.dragging = '';
             }, 100);
-            drag = false;
             return false;
         }
 
-        document.body.addEventListener('mousedown', startDrag, false);
+        window.addEventListener('mousedown', startDrag, false);
         window.addEventListener('mouseup', stopDrag, false);
+    },
+
+    unbind(el) {
+        if (listeners[el.dataset.listenerId] && listeners[el.dataset.listenerId].length) {
+            listeners[el.dataset.listenerId].forEach(listener => {
+                window.removeEventListener(listener.name, listener.listener);
+            });
+            delete listeners[el.dataset.listenerId];
+        }
     }
 };
 

@@ -1,17 +1,21 @@
 <template>
     <div class="expand-ball" 
-        :data-open="opts.openTxt" :data-close="opts.closeTxt" 
         v-toggle-expand="opts" 
         v-setup-style="opts"
         v-draggable>
-        <div class="center-ball" @click="toggle">{{ opts.expanded ? opts.openTxt : opts.closeTxt }}</div>
+        <div class="center-ball" @click="toggle">
+            <slot name="ball-open" v-if="opts.expanded">-</slot>
+            <slot name="ball-close" v-if="!opts.expanded">+</slot>
+        </div>
         <div class="rounded-menus">
-            <slot></slot>
+            <slot name="menu"></slot>
         </div>
     </div>
 </template>
 
 <script>
+import {retrieveMenuNodes} from '../helper/dom';
+
 import toggleExpand from '../directives/toggleExpand';
 import setupStyle from '../directives/setupStyle';
 import draggable from '../directives/draggable';
@@ -28,10 +32,8 @@ export default {
             type: Object,
             default() {
                 return {
-                    openTxt: '-',
-                    closeTxt: '+',
-                    ballSize: 40,
-                    menuSize: 40,
+                    ballSize: 30,
+                    menuSize: 30,
                     radius: 60,
                     ballColor: '#41b883',
                     menuColor: '#41b883'
@@ -41,11 +43,9 @@ export default {
     },
     computed: {
         opts() {
-            const ballSize = this.options.ballSize || 40;
+            const ballSize = this.options.ballSize || 30;
             const ballColor = this.options.ballColor || '#41b883';
             return {
-                openTxt: this.options.openTxt || '-',
-                closeTxt: this.options.closeTxt || '+',
                 ballSize: ballSize,
                 menuSize: !this.options.menuSize || this.options.menuSize > ballSize ? ballSize : this.options.menuSize,
                 expanded: this.expanded,
@@ -54,6 +54,16 @@ export default {
                 menuColor: this.options.menuColor || ballColor
             };
         }
+    },
+    mounted() {
+        retrieveMenuNodes(this.$el)
+        .forEach(node => {
+            node.addEventListener('click', () => {
+                if (this.expanded) {
+                    this.expanded = !this.expanded;
+                }
+            }, false);
+        });
     },
     methods: {
         toggle() {
