@@ -5,5 +5,7 @@ npm-debug.log
 #osx
 .DS_Store
 
-#build
+dist/
+src/
 build/
+demo/
