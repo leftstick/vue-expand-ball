@@ -1,4 +1,4 @@
-import {isDescendant} from '../helper/dom';
+import {isDescendant, isTouchable, screenSize} from '../helper/dom';
 import {stop} from '../helper/event';
 
 const listeners = {};
@@ -6,39 +6,30 @@ const listeners = {};
 export default {
     bind(el, bindings, vnode) {
 
+        const {startEvent, moveEvent, endEvent} = geAvailableEvents();
+
         el.dataset.listenerId = 'listener_' + new Date().getTime();
+
         listeners[el.dataset.listenerId] = [{
-            name: 'mousedown',
+            name: startEvent,
             listener: startDrag
         }, {
-            name: 'mouseup',
-            listener: stopDrag
-        }, {
-            name: 'touchstart',
-            listener: startDrag
-        }, {
-            name: 'touchend',
+            name: endEvent,
             listener: stopDrag
         }];
 
-        let timer = null;
-
-        function move(x, y) {
-            el.style.left = (parseInt(window.getComputedStyle(el).left) + x) + 'px';
-            el.style.top = (parseInt(window.getComputedStyle(el).top) + y) + 'px';
-        }
+        let timer = null,
+            coordinates = null;
 
         function mouseMoveHandler(e) {
-            const evt = e || window.event;
-            const x = mouseX(evt);
-            const y = mouseY(evt);
+            const evt = e || window.e;
+            const coords = getCoords(evt);
             stop(e);
-            const offsetX = el.dataset.coodx;
-            const offsetY = el.dataset.coody;
-            if (x !== offsetX || y !== offsetY) {
-                move(x - offsetX, y - offsetY);
-                el.dataset.coodx = x;
-                el.dataset.coody = y;
+            const offsetX = parseFloat(coordinates.x);
+            const offsetY = parseFloat(coordinates.y);
+            if (coords.x !== offsetX || coords.y !== offsetY) {
+                moveElement(el, coords.x - offsetX, coords.y - offsetY);
+                coordinates = coords;
             }
             return false;
         }
@@ -49,18 +40,19 @@ export default {
             }
             document.body.style.touchAction = 'none';
             document.body.style.msTouchAction = 'none';
+            document.body.style.height = '100%';
+            document.body.style.position = 'fixed';
+
             timer = setTimeout(() => {
                 el.dataset.dragging = 'true';
-                const evt = e || window.event;
+                const evt = e || window.e;
                 if (evt.preventDefault) {
                     evt.preventDefault();
                 }
 
-                el.dataset.coodx = mouseX(evt);
-                el.dataset.coody = mouseY(evt);
+                coordinates = getCoords(evt);
 
-                document.body.addEventListener('mousemove', mouseMoveHandler, false);
-                document.body.addEventListener('touchmove', mouseMoveHandler, {
+                document.body.addEventListener(moveEvent, mouseMoveHandler, {
                     passive: false,
                     cancelable: true
                 });
@@ -71,8 +63,7 @@ export default {
         function stopDrag(e) {
             clearTimeout(timer);
 
-            document.body.removeEventListener('mousemove', mouseMoveHandler);
-            document.body.removeEventListener('touchmove', mouseMoveHandler);
+            document.body.removeEventListener(moveEvent, mouseMoveHandler);
 
             adjustBall(el);
 
@@ -80,16 +71,17 @@ export default {
                 el.dataset.dragging = '';
                 document.body.style.touchAction = '';
                 document.body.style.msTouchAction = '';
+                document.body.style.height = '';
+                document.body.style.position = '';
             });
             return false;
         }
 
-        window.addEventListener('mousedown', startDrag, false);
-        window.addEventListener('mouseup', stopDrag, false);
-        window.addEventListener('touchstart', startDrag, {
-            passive: false
+        window.addEventListener(startEvent, startDrag, {
+            passive: false,
+            cancelable: true
         });
-        window.addEventListener('touchend', stopDrag, false);
+        window.addEventListener(endEvent, stopDrag, false);
     },
 
     unbind(el) {
@@ -104,47 +96,50 @@ export default {
 
 function adjustBall(ball) {
     const {top, left, right, bottom, width, height} = ball.getBoundingClientRect();
-    const {clientWidth, clientHeight} = document.documentElement;
+
     if (top < 0) {
         ball.style.top = '1px';
     }
     if (left < 0) {
         ball.style.left = '1px';
     }
-    if (bottom > clientHeight) {
-        ball.style.top = clientHeight - height - 1 + 'px';
+    if (bottom > screenSize.clientHeight) {
+        ball.style.top = screenSize.clientHeight - height - 1 + 'px';
     }
-    if (right > clientWidth) {
-        ball.style.left = clientWidth - width - 1 + 'px';
+    if (right > screenSize.clientWidth) {
+        ball.style.left = screenSize.clientWidth - width - 1 + 'px';
     }
 }
 
-function mouseX(e) {
-    if (e.changedTouches && e.changedTouches.length) {
-        return e.changedTouches[0].clientX;
-    }
-    if (e.pageX) {
-        return e.pageX;
-    }
-    if (e.clientX) {
-        return e.clientX + (document.documentElement.scrollLeft ?
-                document.documentElement.scrollLeft :
-                document.body.scrollLeft);
-    }
-    return null;
+function getCoords(event) {
+    // touch move and touch end have different touch data
+    const touches = event.touches,
+        data = touches && touches.length ? touches : event.changedTouches;
+
+    return {
+        x: isTouchable ? data[0].clientX : event.pageX,
+        y: isTouchable ? data[0].clientY : event.pageY
+    };
 }
 
-function mouseY(e) {
-    if (e.changedTouches && e.changedTouches.length) {
-        return e.changedTouches[0].clientY;
+function geAvailableEvents() {
+    return {
+        startEvent: isTouchable ? 'touchstart' : 'mousedown',
+        moveEvent: isTouchable ? 'touchmove' : 'mousemove',
+        endEvent: isTouchable ? 'touchend' : 'mouseup'
+    };
+}
+
+function moveElement(el, x, y) {
+    let left = parseFloat(window.getComputedStyle(el).left);
+    if (!left) {
+        left = screenSize.clientWidth - parseFloat(window.getComputedStyle(el).right);
     }
-    if (e.pageY) {
-        return e.pageY;
+
+    let top = parseFloat(window.getComputedStyle(el).top);
+    if (!top) {
+        top = screenSize.clientHeight - parseFloat(window.getComputedStyle(el).bottom);
     }
-    if (e.clientY) {
-        return e.clientY + (document.documentElement.scrollTop ?
-                document.documentElement.scrollTop :
-                document.body.scrollTop);
-    }
-    return null;
+    el.style.left = (left + x) + 'px';
+    el.style.top = (top + y) + 'px';
 }

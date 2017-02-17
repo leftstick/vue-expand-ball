@@ -14,3 +14,7 @@ export function isDescendant(parent, child) {
     }
     return false;
 }
+
+export const isTouchable = 'ontouchstart' in window;
+
+export const screenSize = document.documentElement;
