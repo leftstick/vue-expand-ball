@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -107,13 +107,13 @@ function isDescendant(parent, child) {
 
 
 /* styles */
-__webpack_require__(10)
+__webpack_require__(11)
 
-var Component = __webpack_require__(8)(
+var Component = __webpack_require__(9)(
   /* script */
-  __webpack_require__(5),
+  __webpack_require__(6),
   /* template */
-  __webpack_require__(9),
+  __webpack_require__(10),
   /* scopeId */
   "data-v-6f039d14",
   /* cssModules */
@@ -145,6 +145,8 @@ module.exports = Component.exports
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__helper_dom__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helper_event__ = __webpack_require__(5);
+
 
 
 var listeners = {};
@@ -159,13 +161,17 @@ var listeners = {};
         }, {
             name: 'mouseup',
             listener: stopDrag
+        }, {
+            name: 'touchstart',
+            listener: startDrag
+        }, {
+            name: 'touchend',
+            listener: stopDrag
         }];
 
         var offsetX = 0,
             offsetY = 0,
             timer = null;
-
-        var mousemoveTemp = null;
 
         function move(x, y) {
             el.style.left = parseInt(window.getComputedStyle(el).left) + x + 'px';
@@ -176,6 +182,7 @@ var listeners = {};
             var evt = e || window.event;
             var x = mouseX(evt);
             var y = mouseY(evt);
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__helper_event__["a" /* stop */])(e);
             if (x !== offsetX || y !== offsetY) {
                 move(x - offsetX, y - offsetY);
                 offsetX = x;
@@ -188,18 +195,23 @@ var listeners = {};
             if (!__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__helper_dom__["b" /* isDescendant */])(el, e.target)) {
                 return false;
             }
+            document.body.style.touchAction = 'none';
+            document.body.style.msTouchAction = 'none';
             timer = setTimeout(function () {
                 el.dataset.dragging = 'true';
                 var evt = e || window.event;
+                if (evt.preventDefault) {
+                    evt.preventDefault();
+                }
 
                 offsetX = mouseX(evt);
                 offsetY = mouseY(evt);
 
-                // save any previous mousemove event handler:
-                if (document.body.onmousemove) {
-                    mousemoveTemp = document.body.onmousemove;
-                }
-                document.body.onmousemove = mouseMoveHandler;
+                document.body.addEventListener('mousemove', mouseMoveHandler, false);
+                document.body.addEventListener('touchmove', mouseMoveHandler, {
+                    passive: false,
+                    cancelable: true
+                });
             }, 100);
             return false;
         }
@@ -207,20 +219,25 @@ var listeners = {};
         function stopDrag(e) {
             clearTimeout(timer);
 
-            // restore previous mousemove event handler if necessary
-            document.body.onmousemove = mousemoveTemp;
-            mousemoveTemp = null;
+            document.body.removeEventListener('mousemove', mouseMoveHandler);
+            document.body.removeEventListener('touchmove', mouseMoveHandler);
 
             adjustBall(el);
 
             setTimeout(function () {
                 el.dataset.dragging = '';
-            }, 100);
+                document.body.style.touchAction = '';
+                document.body.style.msTouchAction = '';
+            });
             return false;
         }
 
         window.addEventListener('mousedown', startDrag, false);
         window.addEventListener('mouseup', stopDrag, false);
+        window.addEventListener('touchstart', startDrag, {
+            passive: false
+        });
+        window.addEventListener('touchend', stopDrag, false);
     },
     unbind: function unbind(el) {
         if (listeners[el.dataset.listenerId] && listeners[el.dataset.listenerId].length) {
@@ -260,6 +277,9 @@ function adjustBall(ball) {
 }
 
 function mouseX(e) {
+    if (e.changedTouches && e.changedTouches.length) {
+        return e.changedTouches[0].clientX;
+    }
     if (e.pageX) {
         return e.pageX;
     }
@@ -270,6 +290,9 @@ function mouseX(e) {
 }
 
 function mouseY(e) {
+    if (e.changedTouches && e.changedTouches.length) {
+        return e.changedTouches[0].clientY;
+    }
     if (e.pageY) {
         return e.pageY;
     }
@@ -296,6 +319,10 @@ function mouseY(e) {
             menuColor = _bindings$value.menuColor;
 
         var ballEl = el.querySelector('.center-ball');
+
+        el.style.width = ballSize + 'px';
+        el.style.height = ballSize + 'px';
+        el.style.lineHeight = ballSize + 'px';
 
         ballEl.style.width = ballSize + 'px';
         ballEl.style.height = ballSize + 'px';
@@ -354,6 +381,25 @@ function toggle(bindings, el) {
 
 /***/ }),
 /* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = stop;
+
+function stop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+    if (e.stopImmediatePropagation) {
+        e.stopImmediatePropagation();
+    }
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+}
+
+/***/ }),
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -448,10 +494,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(8)();
 // imports
 
 
@@ -462,7 +508,7 @@ exports.push([module.i, "\n.expand-ball[data-v-6f039d14] {\n    position: fixed;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /*
@@ -518,7 +564,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = function normalizeComponent (
@@ -571,7 +617,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -609,17 +655,17 @@ if (false) {
 }
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(6);
+var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(11)("0a5359f4", content, false);
+var update = __webpack_require__(12)("0a5359f4", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -635,7 +681,7 @@ if(false) {
 }
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -654,7 +700,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(12)
+var listToStyles = __webpack_require__(13)
 
 /*
 type StyleObject = {
@@ -871,7 +917,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /**
@@ -904,7 +950,7 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

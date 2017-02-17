@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import {VueExpandBall} from '../../../dist/vue-expand-ball';
+import {VueExpandBall} from '../../../src';
 
 export default function() {
     Vue.use(VueExpandBall);

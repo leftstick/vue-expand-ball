@@ -1,4 +1,5 @@
 import {isDescendant} from '../helper/dom';
+import {stop} from '../helper/event';
 
 const listeners = {};
 
@@ -12,13 +13,17 @@ export default {
         }, {
             name: 'mouseup',
             listener: stopDrag
+        }, {
+            name: 'touchstart',
+            listener: startDrag
+        }, {
+            name: 'touchend',
+            listener: stopDrag
         }];
 
         let offsetX = 0,
             offsetY = 0,
             timer = null;
-
-        let mousemoveTemp = null;
 
         function move(x, y) {
             el.style.left = (parseInt(window.getComputedStyle(el).left) + x) + 'px';
@@ -29,6 +34,7 @@ export default {
             const evt = e || window.event;
             const x = mouseX(evt);
             const y = mouseY(evt);
+            stop(e);
             if (x !== offsetX || y !== offsetY) {
                 move(x - offsetX, y - offsetY);
                 offsetX = x;
@@ -41,18 +47,23 @@ export default {
             if (!isDescendant(el, e.target)) {
                 return false;
             }
+            document.body.style.touchAction = 'none';
+            document.body.style.msTouchAction = 'none';
             timer = setTimeout(() => {
                 el.dataset.dragging = 'true';
                 const evt = e || window.event;
+                if (evt.preventDefault) {
+                    evt.preventDefault();
+                }
 
                 offsetX = mouseX(evt);
                 offsetY = mouseY(evt);
 
-                // save any previous mousemove event handler:
-                if (document.body.onmousemove) {
-                    mousemoveTemp = document.body.onmousemove;
-                }
-                document.body.onmousemove = mouseMoveHandler;
+                document.body.addEventListener('mousemove', mouseMoveHandler, false);
+                document.body.addEventListener('touchmove', mouseMoveHandler, {
+                    passive: false,
+                    cancelable: true
+                });
             }, 100);
             return false;
         }
@@ -60,20 +71,25 @@ export default {
         function stopDrag(e) {
             clearTimeout(timer);
 
-            // restore previous mousemove event handler if necessary
-            document.body.onmousemove = mousemoveTemp;
-            mousemoveTemp = null;
+            document.body.removeEventListener('mousemove', mouseMoveHandler);
+            document.body.removeEventListener('touchmove', mouseMoveHandler);
 
             adjustBall(el);
 
             setTimeout(() => {
                 el.dataset.dragging = '';
-            }, 100);
+                document.body.style.touchAction = '';
+                document.body.style.msTouchAction = '';
+            });
             return false;
         }
 
         window.addEventListener('mousedown', startDrag, false);
         window.addEventListener('mouseup', stopDrag, false);
+        window.addEventListener('touchstart', startDrag, {
+            passive: false
+        });
+        window.addEventListener('touchend', stopDrag, false);
     },
 
     unbind(el) {
@@ -104,6 +120,9 @@ function adjustBall(ball) {
 }
 
 function mouseX(e) {
+    if (e.changedTouches && e.changedTouches.length) {
+        return e.changedTouches[0].clientX;
+    }
     if (e.pageX) {
         return e.pageX;
     }
@@ -116,6 +135,9 @@ function mouseX(e) {
 }
 
 function mouseY(e) {
+    if (e.changedTouches && e.changedTouches.length) {
+        return e.changedTouches[0].clientY;
+    }
     if (e.pageY) {
         return e.pageY;
     }

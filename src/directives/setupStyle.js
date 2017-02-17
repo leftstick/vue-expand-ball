@@ -5,6 +5,10 @@ export default {
         const {ballSize, menuSize, ballColor, menuColor} = bindings.value;
         const ballEl = el.querySelector('.center-ball');
 
+        el.style.width = ballSize + 'px';
+        el.style.height = ballSize + 'px';
+        el.style.lineHeight = ballSize + 'px';
+
         ballEl.style.width = ballSize + 'px';
         ballEl.style.height = ballSize + 'px';
         ballEl.style.lineHeight = ballSize + 'px';
