@@ -21,9 +21,7 @@ export default {
             listener: stopDrag
         }];
 
-        let offsetX = 0,
-            offsetY = 0,
-            timer = null;
+        let timer = null;
 
         function move(x, y) {
             el.style.left = (parseInt(window.getComputedStyle(el).left) + x) + 'px';
@@ -35,10 +33,12 @@ export default {
             const x = mouseX(evt);
             const y = mouseY(evt);
             stop(e);
+            const offsetX = el.dataset.coodx;
+            const offsetY = el.dataset.coody;
             if (x !== offsetX || y !== offsetY) {
                 move(x - offsetX, y - offsetY);
-                offsetX = x;
-                offsetY = y;
+                el.dataset.coodx = x;
+                el.dataset.coody = y;
             }
             return false;
         }
@@ -56,8 +56,8 @@ export default {
                     evt.preventDefault();
                 }
 
-                offsetX = mouseX(evt);
-                offsetY = mouseY(evt);
+                el.dataset.coodx = mouseX(evt);
+                el.dataset.coody = mouseY(evt);
 
                 document.body.addEventListener('mousemove', mouseMoveHandler, false);
                 document.body.addEventListener('touchmove', mouseMoveHandler, {
