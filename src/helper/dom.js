@@ -18,3 +18,23 @@ export function isDescendant(parent, child) {
 export const isTouchable = 'ontouchstart' in window;
 
 export const screenSize = document.documentElement;
+
+let original = {};
+
+export function toggleScrollable(bool) {
+    if (!bool) {
+        original.height = document.body.style.height;
+        original.position = document.body.style.position;
+
+        document.body.style.touchAction = 'none';
+        document.body.style.msTouchAction = 'none';
+        document.body.style.height = '100%';
+        document.body.style.position = 'fixed';
+        return;
+    }
+
+    document.body.style.touchAction = '';
+    document.body.style.msTouchAction = '';
+    document.body.style.height = original.height;
+    document.body.style.position = original.position;
+}

@@ -1,4 +1,4 @@
-import {isDescendant, isTouchable, screenSize} from '../helper/dom';
+import {isDescendant, isTouchable, screenSize, toggleScrollable} from '../helper/dom';
 import {stop} from '../helper/event';
 
 const listeners = {};
@@ -38,10 +38,8 @@ export default {
             if (!isDescendant(el, e.target)) {
                 return false;
             }
-            document.body.style.touchAction = 'none';
-            document.body.style.msTouchAction = 'none';
-            document.body.style.height = '100%';
-            document.body.style.position = 'fixed';
+
+            isTouchable && toggleScrollable(false);
 
             timer = setTimeout(() => {
                 el.dataset.dragging = 'true';
@@ -69,10 +67,7 @@ export default {
 
             setTimeout(() => {
                 el.dataset.dragging = '';
-                document.body.style.touchAction = '';
-                document.body.style.msTouchAction = '';
-                document.body.style.height = '';
-                document.body.style.position = '';
+                isTouchable && toggleScrollable(true);
             });
             return false;
         }
