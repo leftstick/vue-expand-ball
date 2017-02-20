@@ -59,16 +59,18 @@ export default {
         }
 
         function stopDrag(e) {
+            if (timer) {
+                adjustBall(el);
+            }
             clearTimeout(timer);
+            timer = null;
 
             document.body.removeEventListener(moveEvent, mouseMoveHandler);
-
-            adjustBall(el);
 
             setTimeout(() => {
                 el.dataset.dragging = '';
                 isTouchable && toggleScrollable(true);
-            });
+            }, 50);
             return false;
         }
 
