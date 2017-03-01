@@ -622,11 +622,12 @@ module.exports = function normalizeComponent (
 
   // inject cssModules
   if (cssModules) {
-    var computed = options.computed || (options.computed = {})
+    var computed = Object.create(options.computed || null)
     Object.keys(cssModules).forEach(function (key) {
       var module = cssModules[key]
       computed[key] = function () { return module }
     })
+    options.computed = computed
   }
 
   return {
@@ -686,13 +687,13 @@ var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(12)("0a5359f4", content, false);
+var update = __webpack_require__(12)("1be997b4", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/vue-loader/lib/style-rewriter.js?{\"id\":\"data-v-6f039d14\",\"scoped\":true,\"hasInlineConfig\":false}!./../../node_modules/postcss-loader/index.js!./../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./expand-ball.vue", function() {
-     var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/vue-loader/lib/style-rewriter.js?{\"id\":\"data-v-6f039d14\",\"scoped\":true,\"hasInlineConfig\":false}!./../../node_modules/postcss-loader/index.js!./../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./expand-ball.vue");
+   module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/vue-loader/lib/style-rewriter.js?{\"id\":\"data-v-6f039d14\",\"scoped\":true,\"hasInlineConfig\":false}!../../node_modules/postcss-loader/index.js!../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./expand-ball.vue", function() {
+     var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/vue-loader/lib/style-rewriter.js?{\"id\":\"data-v-6f039d14\",\"scoped\":true,\"hasInlineConfig\":false}!../../node_modules/postcss-loader/index.js!../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./expand-ball.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });

@@ -52,10 +52,7 @@ module.exports = function() {
             extensions: [
                 '.js',
                 '.vue'
-            ],
-            alias: {
-                vue$: 'vue/dist/vue.js'
-            }
+            ]
         },
         plugins: [
             new webpack.optimize.UglifyJsPlugin({

@@ -1,14 +1,14 @@
 <template>
     <div class="home">
         <h1 class="page-title">vue-expand-ball</h1>
-        <img src="../../img/preview.gif" alt="preview">
+        <img src="../../img/preview.gif" alt="preview"/>
 
         <github></github>
 
         <div class="home-desc">
             <about class="section"></about>
             <contribution class="section"></contribution>
-        <div>
+        </div>
     </div>
 </template>
 
@@ -26,11 +26,6 @@ export default {
                 menuColor: 'red'
             }
         };
-    },
-    methods: {
-        fuck() {
-            alert('fuck');
-        }
     },
     components: {
         github,

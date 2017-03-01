@@ -12,8 +12,8 @@ class App {
 
     createVueOpts() {
         this.vueOps = {
-            components: {
-                documentation
+            render(h) {
+                return h(documentation);
             },
             ...this.extensionsOpts
         };

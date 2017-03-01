@@ -67,10 +67,7 @@ module.exports = function(env = {}) {
             extensions: [
                 '.js',
                 '.vue'
-            ],
-            alias: {
-                vue$: 'vue/dist/vue.js'
-            }
+            ]
         },
         plugins: (isDemo ? [new webpack.optimize.UglifyJsPlugin({
             compress: {
