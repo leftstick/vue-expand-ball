@@ -1,4 +1,4 @@
-# vue-expand-ball
+vue-expand-ball
 =======================
 [![NPM version][npm-image]][npm-url]
 ![][david-url]
