@@ -33,7 +33,7 @@ module.exports = function(env = {}) {
                         options: {
                             loaders: {
                                 js: 'babel-loader?{"presets":[["es2015", {"modules": false}]],"plugins": ["transform-object-rest-spread"]}',
-                                css: 'vue-style-loader!css-loader!postcss-loader'
+                                css: 'vue-style-loader!css-loader!postcss-loader?sourceMap=true'
                             }
                         }
                     }]
